@@ -31,10 +31,7 @@
                 <span class="input-label">Height (px)</span>
                 <input type="number" id="height" value="200" min="10">
             </div>
-            <div class="input-group">
-    <span class="input-label">Target Size (KB)</span>
-    <input type="number" id="targetSize" value="200" min="10">
-</div>
+          
             
             <button id="openSaveModalBtn" class="btn btn-success" disabled>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -50,8 +47,78 @@
                 <div class="canvas-placeholder" id="placeholderText">
                     <p>Your workspace will appear here once an image is imported.</p>
                 </div>
+                
+
+                
+                
             </div>
         </section>
+
+
+<section class="compressor-workspace">
+
+    <div class="compressor-header">
+        <h2>Image Compressor</h2>
+        <div id="compressInfo">
+            No file loaded
+        </div>
+    </div>
+
+    <div class="compressor-controls">
+
+        <label class="btn btn-primary">
+            Import Image
+            <input
+                type="file"
+                id="compressUpload"
+                accept="image/*">
+        </label>
+
+        <div class="input-group">
+            <span class="input-label">
+                Target Size (KB)
+            </span>
+
+            <input
+                type="number"
+                id="compressTargetKB"
+                value="300"
+                min="10">
+        </div>
+
+        <button
+            id="compressExportBtn"
+            class="btn btn-success">
+
+            Export Compressed Image
+
+        </button>
+
+    </div>
+
+    <div class="compressor-preview">
+
+        <img
+            id="compressPreview"
+            alt="Preview">
+
+        <div
+            id="compressPlaceholder"
+            class="canvas-placeholder">
+
+            <p>
+                Import an image to preview it.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
     </main>
 
     <!-- Naming Modal (Popup) -->
