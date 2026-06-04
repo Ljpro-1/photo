@@ -480,3 +480,101 @@ canvas {
     align-items: center;
     justify-content: center;
 }
+
+
+/* =========================
+   ASPECT RATIO FORMATTER
+========================= */
+
+.ratio-workspace {
+    margin-top: 40px;
+}
+
+.ratio-header {
+    margin-bottom: 20px;
+}
+
+.ratio-header h2 {
+    color: #ffb8d2;
+    margin-bottom: 10px;
+}
+
+#ratioInfo {
+    color: #8ff0c7;
+}
+
+.ratio-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    
+    background: #141d18;
+    
+    border: 1px solid #2f6446;
+    
+    padding: 20px;
+    
+    border-radius: 10px;
+    
+    margin-bottom: 20px;
+}
+
+.ratio-import-btn {
+    background: #ffb8d2;
+    color: #111;
+}
+
+.ratio-export-btn {
+    background: #61d6a5;
+    color: #111;
+}
+
+.ratio-preview {
+    
+    position: relative;
+    
+    width: 100%;
+    
+    min-height: 350px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    background: #050708;
+    
+    border: 1px solid #2f6446;
+    
+    border-radius: 10px;
+    
+    overflow: auto;
+    
+    padding: 20px;
+}
+
+#ratioCanvas {
+    max-width: 100%;
+    height: auto;
+}
+
+#ratioPlaceholder {
+    position: absolute;
+}
+
+#ratioSelect {
+    
+    width: 180px;
+    
+    background: #1A2229;
+    
+    color: white;
+    
+    border: 1px solid #2f6446;
+    
+    border-radius: 8px;
+    
+    padding: 12px;
+    
+    outline: none;
+}
