@@ -808,3 +808,465 @@ compressExportBtn.addEventListener(
 
     }
 );
+
+
+
+
+
+// =====================================
+// ASPECT RATIO FORMATTER
+// =====================================
+
+const ratioUpload =
+    document.getElementById(
+        'ratioUpload'
+    );
+
+const ratioCanvas =
+    document.getElementById(
+        'ratioCanvas'
+    );
+
+const ratioCtx =
+    ratioCanvas.getContext(
+        '2d'
+    );
+
+const ratioSelect =
+    document.getElementById(
+        'ratioSelect'
+    );
+
+const ratioInfo =
+    document.getElementById(
+        'ratioInfo'
+    );
+
+const ratioPlaceholder =
+    document.getElementById(
+        'ratioPlaceholder'
+    );
+
+const ratioExportBtn =
+    document.getElementById(
+        'ratioExportBtn'
+    );
+
+let ratioImage =
+    new Image();
+    
+    let ratioCropX = 0;
+let ratioCropY = 0;
+
+let ratioCropW = 0;
+let ratioCropH = 0;
+
+let ratioDragging = false;
+
+let ratioStartX = 0;
+let ratioStartY = 0;
+
+ratioUpload.addEventListener(
+    'change',
+    e => {
+
+        const file =
+            e.target.files[0];
+
+        if (!file) return;
+
+        ratioImage.src =
+            URL.createObjectURL(
+                file
+            );
+
+        const sizeMB =
+            (
+                file.size /
+                1000000
+            ).toFixed(2);
+
+        ratioInfo.textContent =
+            `Original Size : ${sizeMB} MB`;
+
+    }
+);
+
+ratioImage.onload = () => {
+
+    ratioPlaceholder.style.display =
+        'none';
+
+    const detectedRatio =
+        detectRatio(
+            ratioImage.width,
+            ratioImage.height
+        );
+
+    ratioInfo.textContent =
+        `Original Ratio : ${detectedRatio} | ${ratioImage.width} × ${ratioImage.height}px`;
+
+    drawRatioCanvas();
+
+};
+ratioSelect.addEventListener(
+    'change',
+    drawRatioCanvas
+);
+
+function drawRatioCanvas(){
+
+    if (!ratioImage.src) return;
+    
+    
+    ratioCtx.clearRect(
+    0,
+    0,
+    ratioCanvas.width,
+    ratioCanvas.height
+);
+
+    const ratio =
+        ratioSelect.value;
+
+    const parts =
+        ratio.split(':');
+
+    const rw =
+        parseInt(parts[0]);
+
+    const rh =
+        parseInt(parts[1]);
+
+    const targetRatio =
+        rw / rh;
+
+    let cropW;
+    let cropH;
+
+    if (
+        ratioImage.width /
+        ratioImage.height >
+        targetRatio
+    ){
+
+        cropH =
+            ratioImage.height;
+
+        cropW =
+            cropH *
+            targetRatio;
+
+    } else {
+
+        cropW =
+            ratioImage.width;
+
+        cropH =
+            cropW /
+            targetRatio;
+
+    }
+
+    ratioCropW = cropW;
+ratioCropH = cropH;
+
+if (
+    ratioCropX === 0 &&
+    ratioCropY === 0
+) {
+
+    ratioCropX =
+        (
+            ratioImage.width -
+            cropW
+        ) / 2;
+
+    ratioCropY =
+        (
+            ratioImage.height -
+            cropH
+        ) / 2;
+
+}
+
+const sx = ratioCropX;
+const sy = ratioCropY;
+
+    ratioCanvas.width =
+        cropW;
+
+    ratioCanvas.height =
+        cropH;
+
+    ratioCtx.drawImage(
+        ratioImage,
+        sx,
+        sy,
+        cropW,
+        cropH,
+        0,
+        0,
+        cropW,
+        cropH
+    );
+}
+
+
+
+function detectRatio(width, height){
+
+    const ratios = [
+        [1,1],
+        [2,3],
+        [3,2],
+        [4,3],
+        [16,9],
+        [9,16]
+    ];
+
+    const current =
+        width / height;
+
+    let closest =
+        "Custom";
+
+    let minDiff =
+        Infinity;
+
+    ratios.forEach(r => {
+
+        const value =
+            r[0] / r[1];
+
+        const diff =
+            Math.abs(
+                current - value
+            );
+
+        if(diff < minDiff){
+
+            minDiff = diff;
+
+            closest =
+                `${r[0]}:${r[1]}`;
+        }
+
+    });
+
+    return closest;
+}
+
+ratioCanvas.addEventListener(
+    'mousedown',
+    e => {
+
+        ratioDragging = true;
+
+        ratioStartX = e.offsetX;
+        ratioStartY = e.offsetY;
+
+    }
+);
+
+window.addEventListener(
+    'mouseup',
+    () => {
+
+        ratioDragging = false;
+
+    }
+);
+
+ratioCanvas.addEventListener(
+    'mousemove',
+    e => {
+
+        if (!ratioDragging) return;
+
+        const dx =
+            e.offsetX - ratioStartX;
+
+        const dy =
+            e.offsetY - ratioStartY;
+
+        ratioCropX -= dx;
+        ratioCropY -= dy;
+
+        if (ratioCropX < 0)
+            ratioCropX = 0;
+
+        if (ratioCropY < 0)
+            ratioCropY = 0;
+
+        if (
+            ratioCropX + ratioCropW >
+            ratioImage.width
+        ) {
+
+            ratioCropX =
+                ratioImage.width -
+                ratioCropW;
+
+        }
+
+        if (
+            ratioCropY + ratioCropH >
+            ratioImage.height
+        ) {
+
+            ratioCropY =
+                ratioImage.height -
+                ratioCropH;
+
+        }
+
+        ratioStartX = e.offsetX;
+        ratioStartY = e.offsetY;
+
+        drawRatioCanvas();
+
+    }
+);
+
+
+ratioCanvas.addEventListener(
+    'touchstart',
+    e => {
+
+        if (
+            e.touches.length !== 1
+        ) return;
+
+        ratioDragging = true;
+
+        ratioStartX =
+            e.touches[0].clientX;
+
+        ratioStartY =
+            e.touches[0].clientY;
+
+    },
+    { passive:true }
+);
+
+window.addEventListener(
+    'touchend',
+    () => {
+
+        ratioDragging = false;
+
+    }
+);
+
+ratioCanvas.addEventListener(
+    'touchmove',
+    e => {
+
+        if (!ratioDragging)
+            return;
+
+        e.preventDefault();
+
+        const currentX =
+            e.touches[0].clientX;
+
+        const currentY =
+            e.touches[0].clientY;
+
+        const dx =
+            currentX -
+            ratioStartX;
+
+        const dy =
+            currentY -
+            ratioStartY;
+
+        ratioCropX -= dx;
+        ratioCropY -= dy;
+
+        if (ratioCropX < 0)
+            ratioCropX = 0;
+
+        if (ratioCropY < 0)
+            ratioCropY = 0;
+
+        if (
+            ratioCropX +
+            ratioCropW >
+            ratioImage.width
+        ) {
+
+            ratioCropX =
+                ratioImage.width -
+                ratioCropW;
+
+        }
+
+        if (
+            ratioCropY +
+            ratioCropH >
+            ratioImage.height
+        ) {
+
+            ratioCropY =
+                ratioImage.height -
+                ratioCropH;
+
+        }
+
+        ratioStartX =
+            currentX;
+
+        ratioStartY =
+            currentY;
+
+        drawRatioCanvas();
+
+    },
+    { passive:false }
+);
+
+
+
+
+ratioExportBtn.addEventListener(
+    'click',
+    () => {
+
+        if (
+            !ratioImage.src
+        ) return;
+
+        ratioCanvas.toBlob(
+            blob => {
+
+                const url =
+                    URL.createObjectURL(
+                        blob
+                    );
+
+                const a =
+                    document.createElement(
+                        'a'
+                    );
+
+                a.href =
+                    url;
+
+                a.download =
+                    'ratio-image.jpg';
+
+                a.click();
+
+                URL.revokeObjectURL(
+                    url
+                );
+
+            },
+            'image/jpeg',
+            0.95
+        );
+
+    }
+);
