@@ -116,6 +116,72 @@
 
 </section>
 
+<section class="ratio-workspace">
+
+    <div class="ratio-header">
+        <h2>Aspect Ratio Formatter</h2>
+        <div id="ratioInfo">
+            No file loaded
+        </div>
+    </div>
+
+    <div class="ratio-controls">
+
+        <label class="btn ratio-import-btn">
+            Import Image
+            <input
+                type="file"
+                id="ratioUpload"
+                accept="image/*">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-label">
+                Aspect Ratio
+            </span>
+
+            <select id="ratioSelect">
+
+                <option value="1:1">1:1 Square</option>
+                <option value="2:3">2:3 Portrait</option>
+                <option value="3:2">3:2 Landscape</option>
+                <option value="4:3">4:3 Classic</option>
+                <option value="16:9">16:9 Wide</option>
+                <option value="9:16">9:16 Vertical</option>
+
+            </select>
+
+        </div>
+
+        <button
+            id="ratioExportBtn"
+            class="btn ratio-export-btn">
+
+            Export Reformatted Image
+
+        </button>
+
+    </div>
+
+    <div class="ratio-preview">
+
+        <canvas id="ratioCanvas"></canvas>
+
+        <div
+            id="ratioPlaceholder"
+            class="canvas-placeholder">
+
+            <p>
+                Import an image and choose a ratio.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 
 
