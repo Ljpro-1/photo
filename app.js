@@ -7,6 +7,11 @@
 const upload = document.getElementById('upload');
 const widthInput = document.getElementById('width');
 const heightInput = document.getElementById('height');
+
+
+const targetSizeInput =
+    document.getElementById('targetSize');
+
 const openSaveModalBtn = document.getElementById('openSaveModalBtn');
 const imageInfo = document.getElementById('imageInfo');
 const canvas = document.getElementById('canvas');
@@ -244,7 +249,6 @@ function renderFrame() {
     drawCorners();
     
 }
-
 
 
 // =====================================
@@ -513,76 +517,136 @@ cancelModalBtn.addEventListener(
 
 confirmDownloadBtn.addEventListener(
     'click',
-    () => {
+    async () => {
+        
+        let filename =
+            filenameInput.value.trim();
+        
+        if (!filename) {
+            filename = 'cropped-asset';
+        }
+        
+        const targetW =
+            parseInt(widthInput.value) || 200;
+        
+        const targetH =
+            parseInt(heightInput.value) || 200;
+        
+        const targetKB =
+            parseInt(targetSizeInput.value) || 200;
+        
+        const tempCanvas =
+            document.createElement('canvas');
+        
+        tempCanvas.width = targetW;
+        tempCanvas.height = targetH;
+        
+        const tempCtx =
+            tempCanvas.getContext('2d');
+        
+        tempCtx.imageSmoothingEnabled = true;
+        tempCtx.imageSmoothingQuality = 'high';
+        
+        const sx = Math.round(cropX);
+        const sy = Math.round(cropY);
+        const sw = Math.round(cropW);
+        const sh = Math.round(cropH);
+        
+        tempCtx.drawImage(
+            img,
+            sx,
+            sy,
+            sw,
+            sh,
+            0,
+            0,
+            targetW,
+            targetH
+        );
+        
+        let quality = 0.95;
+        
+        let blob =
+            await new Promise(resolve =>
+                tempCanvas.toBlob(
+                    resolve,
+                    'image/jpeg',
+                    quality
+                )
+            );
+        
+        while (
+            blob.size >
+            targetKB * 1024 &&
+            quality > 0.1
+        ) {
+            
+            quality -= 0.05;
+            
+            blob =
+                await new Promise(resolve =>
+                    tempCanvas.toBlob(
+                        resolve,
+                        'image/jpeg',
+                        quality
+                    )
+                );
+        }
+        
+        const url =
+            URL.createObjectURL(blob);
+        
+        const link =
+            document.createElement('a');
+        
+        link.href = url;
+        
+        link.download =
+            `${filename}.jpg`;
+        
+        link.click();
+        
+        URL.revokeObjectURL(url);
+        
+        saveModal.classList.remove('active');
+        
+    }
+);confirmDownloadBtn.addEventListener(
+    'click',
+    async () => {
 
         let filename =
             filenameInput.value.trim();
 
         if (!filename) {
-            filename =
-                'cropped-asset';
+            filename = 'cropped-asset';
         }
 
         const targetW =
-            parseInt(
-                widthInput.value
-            ) || 200;
+            parseInt(widthInput.value) || 200;
 
         const targetH =
-            parseInt(
-                heightInput.value
-            ) || 200;
+            parseInt(heightInput.value) || 200;
 
-        // Prévenir l'agrandissement destructeur
-        if (
-            cropW < targetW ||
-            cropH < targetH
-        ) {
-
-            const proceed =
-                confirm(
-                    'Selected area is smaller than export size. Quality may decrease. Continue?'
-                );
-
-            if (!proceed) {
-                return;
-            }
-
-        }
+        const targetKB =
+            parseInt(targetSizeInput.value) || 200;
 
         const tempCanvas =
-            document.createElement(
-                'canvas'
-            );
+            document.createElement('canvas');
 
-        tempCanvas.width =
-            targetW;
-
-        tempCanvas.height =
-            targetH;
+        tempCanvas.width = targetW;
+        tempCanvas.height = targetH;
 
         const tempCtx =
-            tempCanvas.getContext(
-                '2d'
-            );
+            tempCanvas.getContext('2d');
 
-        tempCtx.imageSmoothingEnabled =
-            true;
+        tempCtx.imageSmoothingEnabled = true;
+        tempCtx.imageSmoothingQuality = 'high';
 
-        tempCtx.imageSmoothingQuality =
-            'high';
-
-        const sx =
-            Math.round(cropX);
-
-        const sy =
-            Math.round(cropY);
-
-        const sw =
-            Math.round(cropW);
-
-        const sh =
-            Math.round(cropH);
+        const sx = Math.round(cropX);
+        const sy = Math.round(cropY);
+        const sw = Math.round(cropW);
+        const sh = Math.round(cropH);
 
         tempCtx.drawImage(
             img,
@@ -596,25 +660,51 @@ confirmDownloadBtn.addEventListener(
             targetH
         );
 
-        const link =
-            document.createElement(
-                'a'
+        let quality = 0.95;
+
+        let blob =
+            await new Promise(resolve =>
+                tempCanvas.toBlob(
+                    resolve,
+                    'image/jpeg',
+                    quality
+                )
             );
+
+        while (
+            blob.size >
+            targetKB * 1024 &&
+            quality > 0.1
+        ) {
+
+            quality -= 0.05;
+
+            blob =
+                await new Promise(resolve =>
+                    tempCanvas.toBlob(
+                        resolve,
+                        'image/jpeg',
+                        quality
+                    )
+                );
+        }
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const link =
+            document.createElement('a');
+
+        link.href = url;
 
         link.download =
-            `${filename}.png`;
-
-        link.href =
-            tempCanvas.toDataURL(
-                'image/png',
-                1.0
-            );
+            `${filename}.jpg`;
 
         link.click();
 
-        saveModal.classList.remove(
-            'active'
-        );
+        URL.revokeObjectURL(url);
+
+        saveModal.classList.remove('active');
 
     }
 );
