@@ -1270,3 +1270,59 @@ ratioExportBtn.addEventListener(
 
     }
 );
+
+
+
+// =======================
+// PWA INSTALL
+// =======================
+
+if ('serviceWorker' in navigator) {
+
+    navigator.serviceWorker.register(
+        './sw.js'
+    );
+}
+
+const installBtn =
+    document.getElementById(
+        'installBtn'
+    );
+
+let deferredPrompt;
+
+window.addEventListener(
+    'beforeinstallprompt',
+    (e) => {
+
+        e.preventDefault();
+
+        deferredPrompt = e;
+
+        installBtn.hidden = false;
+    }
+);
+
+installBtn.addEventListener(
+    'click',
+    async () => {
+
+        if (!deferredPrompt)
+            return;
+
+        deferredPrompt.prompt();
+
+        await deferredPrompt.userChoice;
+
+        installBtn.hidden = true;
+    }
+);
+
+window.addEventListener(
+    'appinstalled',
+    () => {
+
+        installBtn.hidden = true;
+    }
+);
+
