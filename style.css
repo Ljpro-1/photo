@@ -578,3 +578,31 @@ canvas {
     
     outline: none;
 }
+
+
+#installBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    z-index: 9999;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+#installBtn:hover {
+    transform: translateY(-2px);
+}
